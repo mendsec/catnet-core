@@ -17,23 +17,13 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Run safety unit tests
+        run: |
+          chmod +x scripts/cleanup-branches.sh scripts/cleanup-branches_test.sh
+          ./scripts/cleanup-branches_test.sh
+
       - name: Cleanup invalid branches
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Allowed DevSecOps branch patterns
-          PATTERN="^(main|develop|develop-signed|feature/.*|bugfix/.*|hotfix/.*|release/.*|security/.*|dependabot/.*)$"
-          
-          # Fetch all remote branches (excluding HEAD pointer)
-          BRANCHES=$(git branch -r | grep -v '\->' | sed 's/origin\///')
-          
-          for BRANCH in $BRANCHES; do
-            # Trim whitespace
-            BRANCH=$(echo "$BRANCH" | xargs)
-            if [[ ! "$BRANCH" =~ $PATTERN ]]; then
-              echo "Branch '$BRANCH' does not match DevSecOps culture. Deleting..."
-              git push origin --delete "$BRANCH" || echo "Failed to delete $BRANCH (it may be protected)"
-            else
-              echo "Branch '$BRANCH' is valid."
-            fi
-          done
+          ./scripts/cleanup-branches.sh

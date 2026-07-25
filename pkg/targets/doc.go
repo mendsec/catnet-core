@@ -1,9 +1,11 @@
-// Package targets fornece funcionalidades para parsing de alvos de rede.
+// Package targets provides functionality for network target parsing.
 //
-// O pacote é responsável por interpretar formatos como CIDR, intervalos de
-// IPs (dash ranges) e endereços individuais, expandindo-os em listas de IPs
-// válidas prontas para varredura pelo engine.
+// The package is responsible for interpreting formats such as CIDR, IP ranges
+// (dash ranges), individual IP addresses, and local interface auto-detection ("auto"),
+// expanding them into valid lists of IP addresses ready for engine scanning.
 //
-// Principais exportações:
-// - ParseRange: Analisa e converte uma string de alvo em uma lista de IPs.
+// Primary exports:
+// - ParseRange: Parses and converts a target string (including "auto") into a list of IPs.
+// - DetectLocalRange: Detects active non-loopback local network interface subnets and returns their IPs.
 package targets
+

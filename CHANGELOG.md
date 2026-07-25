@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Targets**: Local network interface auto-detection support via `targets.DetectLocalRange` and `ParseRange("auto")` ([#136](https://github.com/catnet-io/engine/issues/136)).
 - **Discovery**: Cancellation tests for `ReverseDNS` and `GetMAC` to ensure proper termination.
 - **Ports**: Cancellation tests for `ScanPorts` to ensure proper termination without leaking goroutines.
 
@@ -18,6 +19,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - **Governance**: Added Hard Rule #8 in `AGENTS.md` forbidding `squash and merge` to maintain DevSecOps traceability, commit provenance, and auditability.
+
+### Security
+- **CI**: Added explicit primary branch safety guards (`main`, `master`, `develop`) and automated unit test suite (`scripts/cleanup-branches_test.sh`) for branch cleanup workflow to prevent catastrophic branch deletion.
 
 ## [0.5.1] - 2026-07-16
 
