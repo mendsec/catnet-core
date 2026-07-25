@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Targets**: Local network interface auto-detection support via `targets.DetectLocalRange` and `ParseRange("auto")` ([#136](https://github.com/catnet-io/engine/issues/136)).
 - **Discovery**: Cancellation tests for `ReverseDNS` and `GetMAC` to ensure proper termination.
 - **Ports**: Cancellation tests for `ScanPorts` to ensure proper termination without leaking goroutines.
 
