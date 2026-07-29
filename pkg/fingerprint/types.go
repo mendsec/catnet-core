@@ -12,6 +12,18 @@ const (
 	DeviceUnknown     DeviceType = "unknown"
 )
 
+// AssetClass defines broad, high-level asset taxonomy categories.
+type AssetClass string
+
+const (
+	AssetClassNetwork AssetClass = "network"
+	AssetClassCompute AssetClass = "compute"
+	AssetClassIoT     AssetClass = "iot"
+	AssetClassMobile  AssetClass = "mobile"
+	AssetClassStorage AssetClass = "storage"
+	AssetClassUnknown AssetClass = "unknown"
+)
+
 // BannerGrabConfig controls which active probes are sent during banner grabbing.
 type BannerGrabConfig struct {
 	// AggressiveSMB sends an SMB negotiate request to port 445.
@@ -29,6 +41,7 @@ type FingerprintResult struct {
 	OS         string
 	OSFamily   string // "windows", "linux", "macos", "unix", "unknown"
 	DeviceType DeviceType
+	AssetClass AssetClass
 	Vendor     string
 	Confidence int // 0-100
 }

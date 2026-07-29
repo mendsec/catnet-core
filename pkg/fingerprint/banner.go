@@ -118,45 +118,52 @@ func sanitizeBanner(s string) string {
 	return strings.TrimSpace(sb.String())
 }
 
-// OsFromBanners infers the OS and device type from collected banners.
+// OsFromBanners infers OS, device type, and asset class from collected banners.
 func OsFromBanners(banners map[int]string) FingerprintResult {
 	res := FingerprintResult{
 		OS:         "Unknown",
 		OSFamily:   "unknown",
 		DeviceType: DeviceUnknown,
+		AssetClass: AssetClassUnknown,
 		Confidence: 0,
 	}
 
-	hasSSH := false
-	if _, ok := banners[22]; ok {
-		hasSSH = true
+	if len(banners) == 0 {
+		return res
 	}
+
+	// 1. Check specialized asset classes first (Printers, NAS Storage, Routers)
+	if printerRes, ok := isPrinterLike(banners); ok {
+		return printerRes
+	}
+
+	if nasRes, ok := isNASLike(banners); ok {
+		return nasRes
+	}
+
+	if routerRes, ok := isRouterLike(banners); ok {
+		return routerRes
+	}
+
+	// 2. Cross-banner checks for OS platforms (Windows, Linux)
+	if winRes, ok := isWindowsLike(banners); ok {
+		return winRes
+	}
+
+	if linRes, ok := isLinuxLike(banners); ok {
+		return linRes
+	}
+
+	// 3. Fallback generic banner parsing
+	hasLighttpd := false
+	_, has80 := banners[80]
+	_, has8888 := banners[8888]
+	_, has22 := banners[22]
 
 	for port, banner := range banners {
 		lowerBanner := strings.ToLower(banner)
-
-		if port == 22 {
-			if strings.Contains(lowerBanner, "ubuntu") || strings.Contains(lowerBanner, "debian") || strings.Contains(lowerBanner, "centos") {
-				res.OSFamily = "linux"
-				res.OS = "Linux"
-				if strings.Contains(lowerBanner, "ubuntu") {
-					res.OS = "Ubuntu"
-				} else if strings.Contains(lowerBanner, "debian") {
-					res.OS = "Debian"
-				} else if strings.Contains(lowerBanner, "centos") {
-					res.OS = "CentOS"
-				}
-				res.DeviceType = DeviceServer
-				res.Confidence = 90
-				return res
-			}
-			if strings.Contains(lowerBanner, "openssh_for_windows") {
-				res.OSFamily = "windows"
-				res.OS = "Windows"
-				res.DeviceType = DeviceServer
-				res.Confidence = 90
-				return res
-			}
+		if strings.Contains(lowerBanner, "lighttpd") {
+			hasLighttpd = true
 		}
 
 		if port == 80 || port == 8080 {
@@ -164,56 +171,196 @@ func OsFromBanners(banners map[int]string) FingerprintResult {
 				res.OSFamily = "linux"
 				res.OS = "Linux"
 				res.DeviceType = DeviceServer
+				res.AssetClass = AssetClassCompute
 				res.Confidence = 80
 			} else if strings.Contains(lowerBanner, "iis") {
 				res.OSFamily = "windows"
 				res.OS = "Windows"
 				res.DeviceType = DeviceServer
+				res.AssetClass = AssetClassCompute
 				res.Confidence = 80
 				return res
-			} else if strings.Contains(lowerBanner, "lighttpd") {
-				res.DeviceType = DeviceIoT
-				res.Confidence = 70
 			}
-		}
-
-		if port == 445 {
-			// Windows SMB detect
-			if len(lowerBanner) > 0 {
-				res.OSFamily = "windows"
-				res.OS = "Windows"
-				res.Confidence = 70
-			}
-		}
-
-		if port == 3389 {
-			if len(lowerBanner) > 0 {
-				if res.OSFamily == "unknown" || res.OSFamily == "" {
-					res.OSFamily = "windows"
-					res.OS = "Windows"
-					res.Confidence = 70
-				}
-			}
-		}
-	}
-
-	// IoT heuristics: lighttpd OR (port 8888/80 without SSH)
-	_, has80 := banners[80]
-	_, has8888 := banners[8888]
-	hasLighttpd := false
-	for _, b := range banners {
-		if strings.Contains(strings.ToLower(b), "lighttpd") {
-			hasLighttpd = true
-			break
 		}
 	}
 
 	if res.DeviceType == DeviceUnknown {
-		if hasLighttpd || ((has80 || has8888) && !hasSSH) {
+		if hasLighttpd || ((has80 || has8888) && !has22) {
 			res.DeviceType = DeviceIoT
+			res.AssetClass = AssetClassIoT
 			res.Confidence = 60
 		}
 	}
 
 	return res
+}
+
+func isPrinterLike(banners map[int]string) (FingerprintResult, bool) {
+	// JetDirect (9100), IPP (631), LPD (515)
+	has9100 := false
+	has631 := false
+	has515 := false
+
+	for port := range banners {
+		if port == 9100 {
+			has9100 = true
+		} else if port == 631 {
+			has631 = true
+		} else if port == 515 {
+			has515 = true
+		}
+	}
+
+	if has9100 || (has631 && has515) {
+		return FingerprintResult{
+			OS:         "Embedded Printer",
+			OSFamily:   "unix",
+			DeviceType: DeviceIoT,
+			AssetClass: AssetClassIoT,
+			Confidence: 85,
+		}, true
+	}
+	return FingerprintResult{}, false
+}
+
+func isNASLike(banners map[int]string) (FingerprintResult, bool) {
+	for port, b := range banners {
+		lower := strings.ToLower(b)
+		if strings.Contains(lower, "synology") || port == 5000 || port == 5001 {
+			return FingerprintResult{
+				OS:         "Synology DSM",
+				OSFamily:   "linux",
+				DeviceType: DeviceServer,
+				AssetClass: AssetClassStorage,
+				Confidence: 90,
+			}, true
+		}
+		if strings.Contains(lower, "qnap") {
+			return FingerprintResult{
+				OS:         "QNAP QTS",
+				OSFamily:   "linux",
+				DeviceType: DeviceServer,
+				AssetClass: AssetClassStorage,
+				Confidence: 90,
+			}, true
+		}
+	}
+	return FingerprintResult{}, false
+}
+
+func isRouterLike(banners map[int]string) (FingerprintResult, bool) {
+	for port, b := range banners {
+		lower := strings.ToLower(b)
+		if strings.Contains(lower, "routeros") || strings.Contains(lower, "mikrotik") || port == 8291 {
+			return FingerprintResult{
+				OS:         "MikroTik RouterOS",
+				OSFamily:   "linux",
+				DeviceType: DeviceRouter,
+				AssetClass: AssetClassNetwork,
+				Confidence: 95,
+			}, true
+		}
+		if strings.Contains(lower, "openwrt") {
+			return FingerprintResult{
+				OS:         "OpenWrt",
+				OSFamily:   "linux",
+				DeviceType: DeviceRouter,
+				AssetClass: AssetClassNetwork,
+				Confidence: 90,
+			}, true
+		}
+		if strings.Contains(lower, "cisco") {
+			return FingerprintResult{
+				OS:         "Cisco IOS",
+				OSFamily:   "unix",
+				DeviceType: DeviceRouter,
+				AssetClass: AssetClassNetwork,
+				Confidence: 85,
+			}, true
+		}
+	}
+	return FingerprintResult{}, false
+}
+
+func isWindowsLike(banners map[int]string) (FingerprintResult, bool) {
+	hasRDP := false
+	hasSMB := false
+	hasIIS := false
+	hasWinSSH := false
+
+	if b, ok := banners[3389]; ok && len(b) > 0 {
+		hasRDP = true
+	}
+	if b, ok := banners[445]; ok && len(b) > 0 {
+		hasSMB = true
+	}
+	if b, ok := banners[22]; ok && strings.Contains(strings.ToLower(b), "openssh_for_windows") {
+		hasWinSSH = true
+	}
+	for port, b := range banners {
+		if (port == 80 || port == 443) && strings.Contains(strings.ToLower(b), "iis") {
+			hasIIS = true
+		}
+	}
+
+	// Cross-banner correlations for Windows
+	if hasWinSSH || (hasSMB && hasRDP) || (hasSMB && hasIIS) {
+		return FingerprintResult{
+			OS:         "Windows",
+			OSFamily:   "windows",
+			DeviceType: DeviceServer,
+			AssetClass: AssetClassCompute,
+			Confidence: 95,
+		}, true
+	}
+
+	if hasRDP || hasSMB {
+		return FingerprintResult{
+			OS:         "Windows",
+			OSFamily:   "windows",
+			DeviceType: DeviceWorkstation,
+			AssetClass: AssetClassCompute,
+			Confidence: 75,
+		}, true
+	}
+
+	return FingerprintResult{}, false
+}
+
+func isLinuxLike(banners map[int]string) (FingerprintResult, bool) {
+	sshBanner, hasSSH := banners[22]
+	if !hasSSH {
+		return FingerprintResult{}, false
+	}
+
+	lowerSSH := strings.ToLower(sshBanner)
+	if strings.Contains(lowerSSH, "ubuntu") {
+		return FingerprintResult{
+			OS:         "Ubuntu",
+			OSFamily:   "linux",
+			DeviceType: DeviceServer,
+			AssetClass: AssetClassCompute,
+			Confidence: 95,
+		}, true
+	}
+	if strings.Contains(lowerSSH, "debian") {
+		return FingerprintResult{
+			OS:         "Debian",
+			OSFamily:   "linux",
+			DeviceType: DeviceServer,
+			AssetClass: AssetClassCompute,
+			Confidence: 95,
+		}, true
+	}
+	if strings.Contains(lowerSSH, "centos") {
+		return FingerprintResult{
+			OS:         "CentOS",
+			OSFamily:   "linux",
+			DeviceType: DeviceServer,
+			AssetClass: AssetClassCompute,
+			Confidence: 95,
+		}, true
+	}
+
+	return FingerprintResult{}, false
 }
