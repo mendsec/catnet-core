@@ -25,6 +25,9 @@ func osPing(ctx context.Context, ip string, timeoutMs int) bool {
 	if net.ParseIP(ip) == nil {
 		return false
 	}
+	if ctx.Err() != nil {
+		return false
+	}
 	if timeoutMs <= 0 {
 		timeoutMs = 1000 // safe default
 	}
