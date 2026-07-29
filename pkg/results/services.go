@@ -1,9 +1,100 @@
 package results
 
-import "github.com/catnet-io/engine/pkg/ports"
-
-// WellKnownServiceName returns the well-known service name associated with a given TCP port number.
-// If the port is not recognized, it returns an empty string.
+// WellKnownServiceName returns the common service name associated with a given TCP port number.
+// If the port is not recognized in the well-known ports table, it returns an empty string.
 func WellKnownServiceName(port int) string {
-	return ports.WellKnownServiceName(port)
+	switch port {
+	case 20:
+		return "FTP-DATA"
+	case 21:
+		return "FTP"
+	case 22:
+		return "SSH"
+	case 23:
+		return "Telnet"
+	case 25:
+		return "SMTP"
+	case 53:
+		return "DNS"
+	case 67:
+		return "DHCP"
+	case 68:
+		return "DHCP"
+	case 69:
+		return "TFTP"
+	case 80:
+		return "HTTP"
+	case 110:
+		return "POP3"
+	case 123:
+		return "NTP"
+	case 137:
+		return "NetBIOS-NS"
+	case 138:
+		return "NetBIOS-DGM"
+	case 139:
+		return "NetBIOS-SSN"
+	case 143:
+		return "IMAP"
+	case 161:
+		return "SNMP"
+	case 389:
+		return "LDAP"
+	case 443:
+		return "HTTPS"
+	case 445:
+		return "SMB"
+	case 465:
+		return "SMTPS"
+	case 514:
+		return "Syslog"
+	case 548:
+		return "AFP"
+	case 587:
+		return "SMTP-Submission"
+	case 636:
+		return "LDAPS"
+	case 853:
+		return "DNS-over-TLS"
+	case 993:
+		return "IMAPS"
+	case 995:
+		return "POP3S"
+	case 1433:
+		return "MSSQL"
+	case 1521:
+		return "Oracle DB"
+	case 1883:
+		return "MQTT"
+	case 3306:
+		return "MySQL"
+	case 3389:
+		return "RDP"
+	case 5000:
+		return "UPnP"
+	case 5353:
+		return "mDNS"
+	case 5432:
+		return "PostgreSQL"
+	case 5900:
+		return "VNC"
+	case 6379:
+		return "Redis"
+	case 8080:
+		return "HTTP-Alt"
+	case 8443:
+		return "HTTPS-Alt"
+	case 9000:
+		return "SonarQube"
+	case 9090:
+		return "Prometheus"
+	case 9200:
+		return "Elasticsearch"
+	case 11211:
+		return "Memcached"
+	case 27017:
+		return "MongoDB"
+	default:
+		return ""
+	}
 }
