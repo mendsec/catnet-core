@@ -26,6 +26,7 @@ type DeviceInfo struct {
 	OS         string `json:"os,omitempty"`
 	OSFamily   string `json:"osFamily,omitempty"`
 	DeviceType string `json:"deviceType,omitempty"`
+	AssetClass string `json:"assetClass,omitempty"`
 	Vendor     string `json:"vendor,omitempty"`
 	OpenPorts  []int  `json:"openPorts"`
 }
