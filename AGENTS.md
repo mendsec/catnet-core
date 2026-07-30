@@ -15,7 +15,7 @@ pure frontends that import this module via `go.mod`.
 
 **Module path:** `github.com/catnet-io/engine`  
 **Go version:** 1.26.4  
-**Current stable tag:** v0.3.0 (v0.4.0 in preparation — see [Unreleased] in CHANGELOG.md)
+**Current stable tag:** v0.7.0
 
 ---
 
@@ -37,8 +37,7 @@ pure frontends that import this module via `go.mod`.
 | `pkg/topology` | Network graph builder, gateway identification | Stable |
 | `pkg/export` | JSON/CSV export for `[]results.HostResult` | Stable |
 | `pkg/exporter` | JSON/CSV/XML export for `*results.ScanReport` | Stable |
-| `pkg/store` | SQLite scan history — **scheduled for removal** (move to consumers in Sprint 3) | Deprecated |
-| `pkg/diff` | Scan comparison — **scheduled for removal** (move to consumers in Sprint 3) | Deprecated |
+| `pkg/oui` | Offline IEEE OUI database lookup (`Lookup`, `LookupWithPrefix`) | Stable |
 | `pkg/coreerr` | Typed error taxonomy (`ErrTimeout`, `ErrCancelled`) | Stable |
 | `internal/netutil` | Internal network utilities — not part of public API | Internal |
 
@@ -61,8 +60,7 @@ Do not merge or remove either API without explicit instruction. Do not add a thi
 
 ## Hard rules — never violate
 
-1. **Zero CGO.** No CGO in any file in this repository. `modernc.org/sqlite` (pure Go) is
-   the only exception and is scheduled for removal.
+1. **Zero CGO.** No CGO in any file in this repository. Pure Go only.
 2. **Zero UI code.** No Wails bindings, no Bubble Tea imports, no terminal output.
    This is a library — it has no `main` package.
 3. **No scanning logic in consumers.** If you find yourself adding discovery, port scanning,
@@ -70,8 +68,7 @@ Do not merge or remove either API without explicit instruction. Do not add a thi
 4. **English only everywhere.** All code, comments, godoc, log messages, error strings, PR descriptions, PR review comments, commit messages, and documentation across the entire repository must be in English. Portuguese and non-English text are strictly forbidden.
 5. **No local `replace` directives committed to `main`.** Use `scripts/dev-replace.sh on/off`
    to toggle during local development.
-6. **`pkg/store` and `pkg/diff` are deprecated.** Do not add new functionality to these
-   packages. Do not create new callers inside this repository.
+6. **`pkg/store` and `pkg/diff` were removed in v0.5.1.** Do not re-add database persistence or diffing logic to this repository (moved to consumers).
 7. **Immutable GitHub Action Pinning.** All GitHub Actions in workflow files must be pinned to full 40-character commit SHAs. Never use unpinned tags (e.g. `@v4`).
 8. **No `squash and merge`.** Never use squash merges (`gh pr merge --squash` or GitHub UI squash) for PRs in this repository. All PR merges must preserve atomic commit history via merge commits (`gh pr merge --merge`) or rebase merges (`gh pr merge --rebase`) to maintain DevSecOps traceability, commit provenance, and auditability.
 
