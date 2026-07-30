@@ -13,6 +13,7 @@ The following packages form the core stable surface of the ecosystem. Breaking c
 - **`pkg/discovery`**: Discovery tools for Liveness, DNS, and MAC resolution.
 - **`pkg/ports`**: Port scanning utilities.
 - **`pkg/exporter`**: Exporting capabilities (JSON, CSV, XML). JSON is the canonical format.
+- **`pkg/oui`**: Offline IEEE OUI database lookup package (`Lookup`, `LookupWithPrefix`).
 - **`pkg/coreerr`**: Structured error taxonomy. Sentinel errors (`ErrTimeout`, `ErrCancelled`, `ErrInvalidInput`, `ErrPermission`, `ErrExport`, `ErrPartial`) are stable and safe for use with `errors.Is`. New sentinel values may be added without breaking existing checks.
 
 ## Experimental / Internal Packages

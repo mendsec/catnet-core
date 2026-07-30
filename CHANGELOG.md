@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **OUI**: Dedicated `pkg/oui` package providing an offline IEEE OUI lookup database (`Lookup`, `LookupWithPrefix`) ([#106](https://github.com/catnet-io/engine/issues/106)).
+- **Fingerprint**: Heuristic OS detection using TCP Window Size analysis (`GuessOSFromTCPParams`), cross-banner correlation (Windows, Linux, Printers, NAS, Routers), and `AssetClass` taxonomy (`network`, `compute`, `iot`, `mobile`, `storage`, `unknown`) ([#107](https://github.com/catnet-io/engine/issues/107)).
+- **Results / Exporter**: `AssetClass` field added to `DeviceInfo` and XML/CSV exports.
+- **Results / Ports**: `WellKnownServiceName` for mapping TCP port numbers to standard service names ([#141](https://github.com/catnet-io/engine/issues/141)).
 - **Targets**: Local network interface auto-detection support via `targets.DetectLocalRange` and `ParseRange("auto")` ([#136](https://github.com/catnet-io/engine/issues/136)).
 - **Discovery**: Cancellation tests for `ReverseDNS` and `GetMAC` to ensure proper termination.
 - **Ports**: Cancellation tests for `ScanPorts` to ensure proper termination without leaking goroutines.
