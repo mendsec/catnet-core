@@ -7,17 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-07-30
+
 ### Added
 - **OUI**: Dedicated `pkg/oui` package providing an offline IEEE OUI lookup database (`Lookup`, `LookupWithPrefix`) ([#106](https://github.com/catnet-io/engine/issues/106)).
 - **Fingerprint**: Heuristic OS detection using TCP Window Size analysis (`GuessOSFromTCPParams`), cross-banner correlation (Windows, Linux, Printers, NAS, Routers), and `AssetClass` taxonomy (`network`, `compute`, `iot`, `mobile`, `storage`, `unknown`) ([#107](https://github.com/catnet-io/engine/issues/107)).
 - **Results / Exporter**: `AssetClass` field added to `DeviceInfo` and XML/CSV exports.
 - **Results / Ports**: `WellKnownServiceName` for mapping TCP port numbers to standard service names ([#141](https://github.com/catnet-io/engine/issues/141)).
-- **Targets**: Local network interface auto-detection support via `targets.DetectLocalRange` and `ParseRange("auto")` ([#136](https://github.com/catnet-io/engine/issues/136)).
-- **Discovery**: Cancellation tests for `ReverseDNS` and `GetMAC` to ensure proper termination.
-- **Ports**: Cancellation tests for `ScanPorts` to ensure proper termination without leaking goroutines.
+- **Discovery**: `TestPingCancellation` cancellation test with leak detection ([#140](https://github.com/catnet-io/engine/issues/140)).
 
 ### Changed
-- **BREAKING CHANGE**: `Ping`, `ReverseDNS`, `GetMAC`, and `ScanPorts` wrappers in `pkg/scan` and `pkg/discovery` now accept `context.Context` as their first argument.
+- **CI**: Upgraded `actions/setup-go` to `v7.0.0` ([#139](https://github.com/catnet-io/engine/issues/139)) and `actions/checkout` to `v7.0.1` ([#138](https://github.com/catnet-io/engine/issues/138)).
+- **Docs**: API stability contract updates for Phase 2 domain expansions.
+
+## [0.6.0] - 2026-07-24
+
+### Added
+- **Targets**: Local network interface auto-detection support via `targets.DetectLocalRange` and `ParseRange("auto")` ([#136](https://github.com/catnet-io/engine/issues/136)).
+- **Fingerprint**: Active RDP negotiation probe and OS heuristics (`pkg/fingerprint`).
+- **Export**: Optimized CSV export memory allocations.
+
+### Changed
+- **BREAKING CHANGE**: `Ping`, `ReverseDNS`, `GetMAC`, and `ScanPorts` wrappers in `pkg/scan` and `pkg/discovery` now accept `context.Context` as their first argument ([#132](https://github.com/catnet-io/engine/issues/132)).
 - **Discovery**: `osGetMAC` in `pkg/discovery/os_posix.go` and `pkg/discovery/os_windows.go` properly respect context cancellation.
 - **Governance**: Updated Hard Rule #4 in `AGENTS.md` mandating English for all repository artifacts, PR review comments, descriptions, and commit messages.
 
@@ -26,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 - **CI**: Added explicit primary branch safety guards (`main`, `master`, `develop`) and automated unit test suite (`scripts/cleanup-branches_test.sh`) for branch cleanup workflow to prevent catastrophic branch deletion.
+
 
 ## [0.5.1] - 2026-07-16
 
@@ -179,7 +191,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CI: `go vet` + `go test -race` no GitHub Actions.
 - CI: `govulncheck` semanal.
 
-[Unreleased]: https://github.com/catnet-io/engine/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/catnet-io/engine/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/catnet-io/engine/compare/v0.6.0...v0.7.0
+[0.6.0]: https://github.com/catnet-io/engine/compare/v0.5.1...v0.6.0
+[0.5.1]: https://github.com/catnet-io/engine/compare/v0.5.0...v0.5.1
+[0.5.0]: https://github.com/catnet-io/engine/compare/v0.4.0...v0.5.0
+[0.4.0]: https://github.com/catnet-io/engine/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/catnet-io/engine/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/catnet-io/engine/compare/v0.1.2...v0.2.0
 [0.1.2]: https://github.com/catnet-io/engine/releases/tag/v0.1.2

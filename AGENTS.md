@@ -15,7 +15,7 @@ pure frontends that import this module via `go.mod`.
 
 **Module path:** `github.com/catnet-io/engine`  
 **Go version:** 1.26.4  
-**Current stable tag:** v0.3.0 (v0.4.0 in preparation — see [Unreleased] in CHANGELOG.md)
+**Current stable tag:** v0.7.0
 
 ---
 
