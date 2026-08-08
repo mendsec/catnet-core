@@ -267,20 +267,19 @@ func TestSlowCallbackDoesNotStallWorkers(t *testing.T) {
 	cfg.PortTimeoutMs = 50
 	cfg.DefaultPorts = []int{}
 
-	callbackDelay := 5 * time.Millisecond
+	callbackDelay := 20 * time.Millisecond
 	start := time.Now()
 
-	_, _ = StartScan(context.Background(), ips, cfg, func(ev ScanEvent) {
+	report, _ := StartScan(context.Background(), ips, cfg, func(ev ScanEvent) {
 		if ev.Type == EventResult {
 			time.Sleep(callbackDelay) // simulate slow UI render
 		}
 	})
 
-	elapsed := time.Since(start)
+	elapsed := report.EndTime.Sub(start)
 
 	// With async dispatch, scan should complete significantly faster
 	// than 50 hosts × 20ms callback delay = 1000ms if workers were stalled sequentially.
-	// 50 hosts * 5ms = 250ms.
 	maxAllowed := 800 * time.Millisecond
 	if elapsed > maxAllowed {
 		t.Errorf("slow callback stalled workers: elapsed %v > %v", elapsed, maxAllowed)
