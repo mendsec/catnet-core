@@ -126,3 +126,55 @@ func TestPingCancellationActive(t *testing.T) {
 		t.Errorf("Goroutine leak detected in active Ping cancellation: before=%d, after=%d", before, after)
 	}
 }
+
+func TestReverseDNSCancellationActive(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	before := runtime.NumGoroutine()
+
+	go func() {
+		time.Sleep(5 * time.Millisecond)
+		cancel()
+	}()
+
+	res := ReverseDNS(ctx, "192.0.2.1")
+	if res != "" {
+		t.Errorf("ReverseDNS() with actively cancelled context should return empty string, got: %q", res)
+	}
+
+	for i := 0; i < 10; i++ {
+		if runtime.NumGoroutine() <= before+3 {
+			return
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+	after := runtime.NumGoroutine()
+	if after > before+3 {
+		t.Errorf("Goroutine leak detected in active ReverseDNS cancellation: before=%d, after=%d", before, after)
+	}
+}
+
+func TestGetMACCancellationActive(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	before := runtime.NumGoroutine()
+
+	go func() {
+		time.Sleep(5 * time.Millisecond)
+		cancel()
+	}()
+
+	res := GetMAC(ctx, "192.0.2.1")
+	if res != "" {
+		t.Errorf("GetMAC() with actively cancelled context should return empty string, got: %q", res)
+	}
+
+	for i := 0; i < 10; i++ {
+		if runtime.NumGoroutine() <= before+3 {
+			return
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+	after := runtime.NumGoroutine()
+	if after > before+3 {
+		t.Errorf("Goroutine leak detected in active GetMAC cancellation: before=%d, after=%d", before, after)
+	}
+}
