@@ -18,7 +18,7 @@ var (
 	sendARP         = iphlpapi.NewProc("SendARP")
 )
 
-// osPing faz ping no Windows
+// osPing performs a ping on Windows
 // ⚡ Bolt Optimization: Use native IcmpSendEcho from iphlpapi.dll instead of spawning ping.exe.
 // This avoids process-creation overhead on Windows for massive concurrent scans.
 func osPing(ctx context.Context, ip string, timeoutMs int) bool {
@@ -87,7 +87,7 @@ func osPing(ctx context.Context, ip string, timeoutMs int) bool {
 	}
 }
 
-// osGetMAC obtém o MAC usando SendARP no Windows
+// osGetMAC obtains the MAC using SendARP on Windows
 func osGetMAC(ctx context.Context, ip string) string {
 	if ctx.Err() != nil {
 		return ""
@@ -105,11 +105,11 @@ func osGetMAC(ctx context.Context, ip string) string {
 	go func() {
 		var mac [6]byte
 		macLen := uint32(len(mac))
-		// Segurança: mac é um array de tamanho fixo [6]byte alocado na stack.
-		// macLen é inicializado com len(mac) == 6 antes da chamada.
-		// O acesso via unsafe.Pointer é seguro porque o array não escapa do
-		// escopo e seu tamanho é conhecido em tempo de compilação.
-		// A validação `macLen == 6` após o retorno garante dados não corrompidos.
+		// Security: mac is a fixed size array [6]byte allocated on the stack.
+		// macLen is initialized with len(mac) == 6 before the call.
+		// Access via unsafe.Pointer is safe because the array does not escape the
+		// scope and its size is known at compile time.
+		// The validation `macLen == 6` after the return guarantees uncorrupted data.
 		ret, _, _ := sendARP.Call(
 			uintptr(destIPUint32),
 			0,
