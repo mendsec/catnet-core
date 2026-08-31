@@ -13,7 +13,7 @@ import (
 	"strings"
 )
 
-// osPing faz ping em sistemas POSIX
+// osPing performs a ping on POSIX systems
 func osPing(ctx context.Context, ip string, timeoutMs int) bool {
 	if net.ParseIP(ip) == nil {
 		return false
@@ -40,7 +40,7 @@ func osPing(ctx context.Context, ip string, timeoutMs int) bool {
 	return cmd.Run() == nil
 }
 
-// osGetMAC obtém o MAC em sistemas POSIX
+// osGetMAC gets the MAC address on POSIX systems
 // ⚡ Bolt Optimization: Read directly from /proc/net/arp on Linux before falling back to `arp -an` exec.
 // This avoids expensive fork/exec overhead for a 100x+ speedup during concurrent scans.
 func osGetMAC(ctx context.Context, ip string) string {

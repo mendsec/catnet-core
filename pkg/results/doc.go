@@ -1,10 +1,10 @@
-// Package results define os modelos de dados para os resultados de varredura.
+// Package results defines the data models for the scan results.
 //
-// Este pacote contém as estruturas de dados fundamentais para representar
-// hosts, portas abertas, status de atividade e relatórios consolidados,
-// mantendo consistência na representação dos dados exportados.
+// This package contains the fundamental data structures to represent
+// hosts, open ports, activity status and consolidated reports,
+// maintaining consistency in the representation of exported data.
 //
-// Principais exportações:
-// - ScanReport: Representa o relatório final e sumarizado de uma varredura.
-// - DeviceInfo: Representa os detalhes descobertos de um host individual.
+// Main exports:
+// - ScanReport: Represents the final and summarized report of a scan.
+// - DeviceInfo: Represents the discovered details of an individual host.
 package results
