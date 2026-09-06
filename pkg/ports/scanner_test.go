@@ -4,8 +4,10 @@ import (
 	"context"
 	"net"
 	"net/http/httptest"
+	"runtime"
 	"strconv"
 	"testing"
+	"time"
 )
 
 func TestScanPorts(t *testing.T) {
@@ -63,5 +65,40 @@ func TestScanPortsCancellation(t *testing.T) {
 
 	if count != 0 {
 		t.Errorf("expected 0 ports returned after cancellation, got %d", count)
+	}
+}
+
+func TestScanPortsPrematureCancel(t *testing.T) {
+	before := runtime.NumGoroutine()
+
+	ts := httptest.NewServer(nil)
+	defer ts.Close()
+
+	ctx, cancel := context.WithCancel(context.Background())
+
+	ports := make([]int, 1000)
+	for i := 0; i < 1000; i++ {
+		ports[i] = 10000 + i
+	}
+
+	go func() {
+		// allow goroutines to spawn
+		time.Sleep(10 * time.Millisecond)
+		cancel()
+	}()
+
+	openChan := ScanPorts(ctx, "127.0.0.1", ports, 500)
+	for range openChan {
+		// drain channel
+	}
+
+	// Wait for goroutines to settle
+	time.Sleep(100 * time.Millisecond)
+	runtime.GC()
+
+	after := runtime.NumGoroutine()
+	leak := after - before
+	if leak > 3 { // tolerance for test harness goroutines
+		t.Errorf("goroutine leak detected: %d goroutines created and not cleaned up", leak)
 	}
 }
