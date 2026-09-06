@@ -1,5 +1,5 @@
-// Package netutil contém utilitários internos para operações de rede.
+// Package netutil contains internal utilities for network operations.
 //
-// Provê verificações que não fazem parte da API pública do catnet-core,
-// incluindo a validação rígida de formato de IPs (ex: ValidateIPv4).
+// Provides checks that are not part of the public API of catnet-core,
+// including strict format validation of IPs (e.g. ValidateIPv4).
 package netutil

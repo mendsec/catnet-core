@@ -1,10 +1,10 @@
-// Package exporter lida com a formatação e serialização de relatórios.
+// Package exporter handles the formatting and serialization of reports.
 //
-// Suporta a conversão de ScanReport em formatos padronizados (JSON, XML, CSV)
-// garantindo que as exportações evitem problemas de segurança como CSV Injection.
+// Supports the conversion of ScanReport into standardized formats (JSON, XML, CSV)
+// ensuring that exports avoid security issues like CSV Injection.
 //
-// Principais exportações:
-// - ExportJSON: Exporta relatórios como JSON indentado.
-// - ExportXML: Exporta relatórios como XML válido.
-// - ExportCSV: Exporta relatórios para CSV, tratando injeção de fórmulas.
+// Main exports:
+// - ExportJSON: Exports reports as indented JSON.
+// - ExportXML: Exports reports as valid XML.
+// - ExportCSV: Exports reports to CSV, handling formula injection.
 package exporter
