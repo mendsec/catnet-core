@@ -1,12 +1,12 @@
-// Package coreerr define os erros sentinelas da biblioteca.
+// Package coreerr defines the sentinel errors of the library.
 //
-// Centraliza todas as definições de erros conhecidos (timeout, input inválido,
-// cancelamento, erros de exportação) para que consumidores da API
-// possam realizar comparações via errors.Is() com segurança.
+// Centralizes all definitions of known errors (timeout, invalid input,
+// cancellation, export errors) so that API consumers
+// can safely perform comparisons via errors.Is().
 //
-// Principais exportações:
-// - ErrInvalidInput: Erros de formato em IP ou configurações.
-// - ErrTimeout: Erros indicando que uma operação expirou o tempo.
-// - ErrCancelled: Indica que o contexto da varredura foi cancelado.
-// - ErrExport: Erros durante a serialização de dados.
+// Main exports:
+// - ErrInvalidInput: Format errors in IP or configurations.
+// - ErrTimeout: Errors indicating that an operation timed out.
+// - ErrCancelled: Indicates that the scan context was cancelled.
+// - ErrExport: Errors during data serialization.
 package coreerr

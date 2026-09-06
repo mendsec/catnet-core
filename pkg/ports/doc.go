@@ -1,9 +1,9 @@
-// Package ports implementa varredura concorrente de portas TCP.
+// Package ports implements concurrent TCP port scanning.
 //
-// Utiliza tentativas de conexão com controle de simultaneidade interno
-// via semáforos para evitar exaustão de descritores de arquivo,
-// retornando de forma determinística portas que aceitam conexões ativas.
+// Uses connection attempts with internal concurrency control
+// via semaphores to prevent file descriptor exhaustion,
+// deterministically returning ports that accept active connections.
 //
-// Principais exportações:
-// - ScanPorts: Varre uma lista de portas de um host de modo concorrente.
+// Main exports:
+// - ScanPorts: Concurrently scans a list of ports on a host.
 package ports
