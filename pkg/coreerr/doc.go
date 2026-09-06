@@ -4,9 +4,9 @@
 // cancelamento, erros de exportação) para que consumidores da API
 // possam realizar comparações via errors.Is() com segurança.
 //
-// Principais exportações:
-// - ErrInvalidInput: Erros de formato em IP ou configurações.
-// - ErrTimeout: Erros indicando que uma operação expirou o tempo.
-// - ErrCancelled: Indica que o contexto da varredura foi cancelado.
-// - ErrExport: Erros durante a serialização de dados.
+// Main exports:
+// - ErrInvalidInput: Format errors in IP or configurations.
+// - ErrTimeout: Errors indicating that an operation timed out.
+// - ErrCancelled: Indicates that the scan context was cancelled.
+// - ErrExport: Errors during data serialization.
 package coreerr

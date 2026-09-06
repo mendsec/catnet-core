@@ -1,11 +1,11 @@
-// Package engine orquestra a execução concorrente de varreduras na rede.
+// Package engine orchestrates the concurrent execution of network scans.
 //
-// O pacote é o ponto de entrada principal do catnet-core, fornecendo a
-// função StartScan para gerenciar pools de goroutines, timeouts de
-// execução e a emissão de eventos assíncronos durante a varredura.
+// The package is the main entry point for catnet-core, providing the
+// StartScan function to manage goroutine pools, execution timeouts
+// and the emission of asynchronous events during the scan.
 //
-// Principais exportações:
-// - StartScan: Inicia uma varredura de rede.
-// - ScanConfig: Configurações como limites de concorrência e timeouts.
-// - EventCallback: Tipo para recebimento de eventos de progresso e resultados.
+// Main exports:
+// - StartScan: Initiates a network scan.
+// - ScanConfig: Settings such as concurrency limits and timeouts.
+// - EventCallback: Type for receiving progress and result events.
 package engine

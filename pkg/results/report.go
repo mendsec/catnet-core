@@ -2,7 +2,7 @@ package results
 
 import "time"
 
-// ScanReport encapsula o resultado completo de uma varredura.
+// ScanReport encapsulates the complete result of a scan.
 type ScanReport struct {
 	SchemaVersion string       `json:"schemaVersion"`
 	StartTime     time.Time    `json:"startTime"`
@@ -12,7 +12,7 @@ type ScanReport struct {
 	Devices       []DeviceInfo `json:"devices"`
 }
 
-// NewScanReport cria um novo relatório de varredura.
+// NewScanReport creates a new scan report.
 func NewScanReport() *ScanReport {
 	return &ScanReport{
 		SchemaVersion: "2.0.0",
